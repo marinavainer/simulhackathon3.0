@@ -1,0 +1,96 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>Model as MicroService</title>
+        {% endif %}
+    </head>
+    <style>
+      body {
+        padding: 14px;
+      }
+
+      table {
+        width: 100%;
+        margin: 20px auto;
+        table-layout: auto;
+      }
+
+      .fixed {
+        table-layout: fixed;
+      }
+
+      table,
+      td,
+      th {
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: solid 1px;
+        text-align: center;
+      }
+    </style>
+
+    <body>
+      <p>
+        <a href="{{ url_for('dropDB') }}">drop database</a><br/>
+        <a href="{{ url_for('createEntity') }}">create Entity</a>
+      </p>
+      {% with messages = get_flashed_messages() %}
+      <h1>Entities list</h1>
+      <h4>There is currently {{ entities|length }} in the database</h4>
+      {% if entities %}
+
+      <table id="t">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+          <col>
+          <col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>latitude</th>
+            <th>longitude</th>
+            <th>move entity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entity in entities %}
+          <tr>
+            <td>{{ entity.id }}</td>
+            <td>{{ entity.name }}</td>
+            <td>{{ entity.latitude }}</td>
+            <td>{{ entity.longitude }}</td>
+            <td>
+              <form action="entities" method="post">
+                <input type="hidden" id="eid" name="eid" value="{{ entity.id }}">
+                <label for="lat">lat:</label>
+                <input type="text" id="lat" name="lat">
+                <label for="lon">lon:</label>
+                <input type="text" id="lon" name="lon">
+                <label for="vel">vel:</label>
+                <input type="text" id="vel" name="vel">
+                <input type="submit" value="Move entity">
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+      {% endwith %}
+
+      <form action="displayMap">
+        <button type="submit" value="">See entities on map</button>
+      </form> 
+
+    </body>
+</html>

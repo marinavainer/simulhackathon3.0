@@ -1,0 +1,14 @@
+<html>
+    <head>
+    </head>
+    <body>
+      {% if entityDetails %}
+        <p>
+          you ask to move {{ entityDetails.eid }} to coordinates<br/>
+          latitude = {{ entityDetails.lat }}<br/>
+          latitude = {{ entityDetails.lon }}<br/>
+          velocity = {{ entityDetails.vel }} km/h<br/>     
+        </p>
+      {% endif %}
+    </body>
+</html>

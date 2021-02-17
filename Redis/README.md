@@ -1,6 +1,6 @@
 # python virtual environment
 ```bash
-pyhton -mvenv hack
+python -m venv hack
 hack/Scripts/activate.bat
 ```
 
@@ -20,7 +20,7 @@ docker run --network hackathon --name hackathon-redis -p6379:6379 -d redis
 ```
 start redis-cli
 ```bash
-docker run --network hackaton --rm --name redis-cli -it redis redis-cli -h hackathon-redis
+docker run --network hackathon --rm --name redis-cli -it redis redis-cli -h hackathon-redis
 ```
 stop
 ```bash
