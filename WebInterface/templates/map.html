@@ -17,7 +17,7 @@
     function LoadMap() {
       // Initialize the platform object:
       var platform = new H.service.Platform({
-        'apikey': 'pHWcaiJ0uNQN_gPBYdfoisTUjN4LBDzUW0pzAtEd2cs'
+        'apikey': 'iueWyFdmM6oexxyOaqC0FDPlGFIGlobzqaMAj608SDw'
       });
 
       var entitiesFomFlask = JSON.parse('{{ entities | safe }}');
@@ -60,12 +60,13 @@
       var markerList = [];
       for (var i = 0; i < arrayLength; i++) {
         var entity = entitiesCoordArray[i];
-        var my_text = entity["name"];
-        var svgMarkup = '<svg  width="70" height="24" xmlns="http://www.w3.org/2000/svg">' +
-                        '<rect stroke="black" fill="${FILL}" x="1" y="1" width="70" height="22" />' +
-                        '<text x="5" y="18" font-size="10pt" font-family="Arial" font-weight="bold" ' +
-                        'text-anchor="left" fill="${STROKE}" >'+my_text+'</text></svg>';
-        var icon = new H.map.Icon(svgMarkup.replace('${FILL}', 'blue').replace('${STROKE}', 'white'));
+        //var my_text = entity["name"];
+        //var svgMarkup = '<svg  width="70" height="24" xmlns="http://www.w3.org/2000/svg">' +
+        //                '<rect stroke="black" fill="${FILL}" x="1" y="1" width="70" height="22" />' +
+        //                '<text x="5" y="18" font-size="10pt" font-family="Arial" font-weight="bold" ' +
+        //                'text-anchor="left" fill="${STROKE}" >'+my_text+'</text></svg>';
+        //var icon = new H.map.Icon(svgMarkup.replace('${FILL}', 'blue').replace('${STROKE}', 'white'));
+        var icon = new H.map.Icon("https://cdn4.iconfinder.com/data/icons/vector-brand-logos/40/Docker-512.png", {size: {w: 64, h: 64}});
         var marker = new H.map.Marker({ lat: entity["lat"], lng: entity["lon"] }, {icon: icon});
         map.addObject(marker);
         //marker.setGeometry({lat:11, lng:21});
@@ -77,7 +78,7 @@
       
       const interval = setInterval(function() {
         UpdatedPosition(markerList)
-      }, 500);
+      }, 100);
     
     }
 
