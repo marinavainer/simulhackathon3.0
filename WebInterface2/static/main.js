@@ -19,15 +19,13 @@ import {
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
 import { getVectorContext } from 'ol/render';
 import socketIOClient from 'socket.io-client';
-const endpoint = "http://127.0.0.1:4001";
 const io = socketIOClient();
 
 
 var entities = new Map();
 
 
-
-var center = [-5639523.95, -3501274.52];
+var center = fromLonLat([34.86249799534971, 32.1543487632238]);
 var map = new OlMap({
   target: document.getElementById('map'),
   view: new View({
@@ -95,6 +93,13 @@ io.on('entities.location', (msg) => {
     source.addFeature(icon);
   });
 });
+
+
+setTimeout(() => {
+  console.log("getting entities...",io);
+  io.emit('get_entities');
+}, 5000);
+
 
 // The polyline string is read from a JSON similiar to those returned
 // by directions APIs such as Openrouteservice and Mapbox.

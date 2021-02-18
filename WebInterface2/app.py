@@ -3,8 +3,10 @@ from flask_socketio import SocketIO
 import os
 import redis
 import time
+from config import Config
 
-r = redis.StrictRedis('localhost', 6379, decode_responses=True)
+r = redis.StrictRedis('docksegenredis.redis.cache.windows.net',6380,password=Config.SECRET_KEY,decode_responses=True, ssl=True) #defauly localhost :6379
+
 root = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), "static", "dist")
 
@@ -12,6 +14,18 @@ root = os.path.join(os.path.dirname(
 app = Flask(__name__, static_url_path='', static_folder='static/dist')
 app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app)
+
+
+@socketio.on('get_entities')
+def handle_message():
+    print("getting entitites...")
+    entity_ids = r.smembers("entities")
+    print("Got {} entities...".format(len(entity_ids)))
+    for eid in entity_ids:
+        lat = r.hget(eid, 'lat')
+        lon = r.hget(eid, 'lon')
+        socketio.emit('entities.location', {"eid": eid, "lat": lat, "lon": lon})
+
 
 
 def event_handler(msg):
@@ -39,4 +53,4 @@ def serve(path):
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app,host='0.0.0.0',port=8080)
