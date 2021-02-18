@@ -1,0 +1,24 @@
+{
+  "name": "feature-move-animation",
+  "dependencies": {
+    "ioredis": "^4.22.0",
+    "ol": "6.5.0",
+    "socket.io-client": "^3.1.1"
+  },
+  "devDependencies": {
+    "@parcel/optimizer-cssnano": "^2.0.0-nightly.598",
+    "@parcel/optimizer-htmlnano": "^2.0.0-nightly.598",
+    "@parcel/packager-css": "^2.0.0-nightly.598",
+    "@parcel/packager-html": "^2.0.0-nightly.598",
+    "@parcel/transformer-css": "^2.0.0-nightly.598",
+    "@parcel/transformer-html": "^2.0.0-nightly.598",
+    "@parcel/transformer-postcss": "^2.0.0-nightly.598",
+    "@parcel/transformer-posthtml": "^2.0.0-nightly.598",
+    "parcel": "^2.0.0-beta.1",
+    "postcss": "^8.2.6"
+  },
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build --public-url . index.html"
+  }
+}
