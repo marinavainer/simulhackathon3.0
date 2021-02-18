@@ -41,7 +41,7 @@
         document.getElementById('mapContainer'),
         maptypes.raster.terrain.map,
         {
-          zoom: 10,
+          zoom: 15,
           center: { lat: entitiesCoordArray[0]["lat"], lng: entitiesCoordArray[0]["lon"] }  
         });
           
@@ -72,13 +72,12 @@
         markerList[i] = marker;
       }
 
-      //markerList.forEach(marker => marker.setPosition( {lat:10.5, lng:20.5} ));
       // Create the default UI:
       var ui = H.ui.UI.createDefault(map, maptypes);       
       
       const interval = setInterval(function() {
         UpdatedPosition(markerList)
-      }, 2000);
+      }, 500);
     
     }
 
