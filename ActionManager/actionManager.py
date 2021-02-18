@@ -2,7 +2,12 @@ import redis
 import json
 from flask import Flask,jsonify,request,abort
 
-r = redis.Redis()
+#r = redis.Redis()
+r = redis.StrictRedis(host='docksegenredis.redis.cache.windows.net',
+        port=6379, 
+        db=0, 
+        password='', 
+        ssl=False)
 
 app = Flask(__name__)
 
@@ -22,12 +27,12 @@ def addActionRequest():
 def addAction(entityId,lat,lon):
     data = {
             'id': entityId,
-            #'name': 'tank #{}'.format(i+1),
             'lat': lat,
             'lon' : lon
     }
 
     r.rpush('queue:movement',json.dumps(data))
+
     print("Adding new movement task")
 
 if __name__ == '__main__':

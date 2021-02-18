@@ -1,0 +1,35 @@
+@startuml
+cloud cloud{
+    node movement{
+
+    }
+    node redis{
+        database redis_db{
+
+        }
+        queue queue{
+            
+        }
+    }
+        frame Windows_VM{
+            [SimEngineMockup]
+        
+    }
+}
+
+frame local_machine_1{
+    file actionTester.py
+}
+frame local_machine_2{
+    [GUI]
+}
+
+actionTester.py -up-> queue
+actionTester.py -up-> redis_db
+movement<--queue
+SimEngineMockup->redis_db
+SimEngineMockup<-redis_db
+
+GUI -up->redis_db
+GUI <-up-redis_db
+@enduml

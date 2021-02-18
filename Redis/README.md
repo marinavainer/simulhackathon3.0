@@ -38,12 +38,16 @@ start redis-cli
 docker run --rm -it redis redis-cli -h YOURHOSTNAME -a PRIMARY_ACCESS_KEY
 ```
 
+from redis-cli
+```
+hgetall entity:1
+llen queue:movement
+```
 
 # Web Api
+```bash
 pip install flask redis
-
-
-
+```
 A minimalistic web api project
 ```python
 from flask import Flask,jsonify
