@@ -1,6 +1,6 @@
 # python virtual environment
 ```bash
-pyhton -mvenv hack
+python -m venv hack
 hack/Scripts/activate.bat
 ```
 

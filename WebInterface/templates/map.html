@@ -1,0 +1,97 @@
+
+<html>  
+  <head>
+  <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+  <link rel="stylesheet" type="text/css"href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+  </head>
+    
+  <body style='margin: 0' onload="LoadMap()">
+  <div style="width: 100%; height: 100%" id="mapContainer"></div>
+  
+  <script>	
+    function LoadMap() {
+      // Initialize the platform object:
+      var platform = new H.service.Platform({
+        'apikey': 'D_PX0rB2drv2PXPRNx5t-fFyWi88aRoB01cLd3DSNkA'
+      });
+
+      var entitiesFomFlask = JSON.parse('{{ entities | safe }}');
+      var arrayLength = entitiesFomFlask.length;
+      var entitiesCoordArray = [];
+
+      for (var i = 0; i < arrayLength; i++) {
+        var currEntityFromFlask = entitiesFomFlask[i];
+        var entityCoord = {}; 
+        entityCoord["name"] = currEntityFromFlask["name"];
+        entityCoord["lat"] = parseFloat(currEntityFromFlask["lat"]);
+        entityCoord["lon"] = parseFloat(currEntityFromFlask["lon"]);
+        entitiesCoordArray[i] = entityCoord;
+      }
+      
+      // Obtain the default m types from the platform object
+      var maptypes = platform.createDefaultLayers();
+  
+      // Initialize a map:
+      var map = new H.Map(
+        document.getElementById('mapContainer'),
+        maptypes.raster.terrain.map,
+        {
+          zoom: 10,
+          center: { lat: entitiesCoordArray[0]["lat"], lng: entitiesCoordArray[0]["lon"] }  
+        });
+          
+      // Enable the event system on the map instance:
+      var mapEvents = new H.mapevents.MapEvents(map);
+      
+      // Add event listener:
+      map.addEventListener('tap', function(evt) {
+        // Log 'tap' and 'mouse' events:
+        console.log(evt.type, evt.currentPointer.type); 
+      });
+  
+      // Instantiate the default behavior, providing the mapEvents object:
+      var behavior = new H.mapevents.Behavior(mapEvents);
+  
+      var markerList = [];
+      for (var i = 0; i < arrayLength; i++) {
+        var entity = entitiesCoordArray[i];
+        var my_text = entity["name"];
+        var svgMarkup = '<svg  width="70" height="24" xmlns="http://www.w3.org/2000/svg">' +
+                        '<rect stroke="black" fill="${FILL}" x="1" y="1" width="70" height="22" />' +
+                        '<text x="5" y="18" font-size="10pt" font-family="Arial" font-weight="bold" ' +
+                        'text-anchor="left" fill="${STROKE}" >'+my_text+'</text></svg>';
+        var icon = new H.map.Icon(svgMarkup.replace('${FILL}', 'blue').replace('${STROKE}', 'white'));
+        var marker = new H.map.Marker({ lat: entity["lat"], lng: entity["lon"] }, {icon: icon});
+        map.addObject(marker);
+        //marker.setGeometry({lat:11, lng:21});
+        markerList[i] = marker;
+      }
+
+      //markerList.forEach(marker => marker.setPosition( {lat:10.5, lng:20.5} ));
+      // Create the default UI:
+      var ui = H.ui.UI.createDefault(map, maptypes);       
+      
+      const interval = setInterval(function() {
+        UpdatedPosition(markerList)
+      }, 3000);
+    
+    }
+
+    function UpdatedPosition(markerList) {
+        $.post('/GetUpdatedPositions'
+        ).done(function(response) {
+          //console.log(response);
+          markerList.forEach(marker => marker.setGeometry( {lat:11, lng:21} ));
+        }).fail(function() {
+          console.log('fail');
+        });
+    }
+
+  </script>
+  </body>
+  </html>
