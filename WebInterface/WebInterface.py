@@ -36,7 +36,7 @@ def addEntity(name, latitude, longitude):
 def getEntityById(eid):
     entityDetails = r.hgetall(eid)
     return entityDetails
-    
+
 
 def getEntities():
     entity_ids = r.smembers("entities")
@@ -47,7 +47,7 @@ def getEntities():
         entities.append(e)
 
     return entities
-    
+
 def getEntity():
 
     id = 'entity:' + str(1)
@@ -60,7 +60,7 @@ def CleanDatabase():
     entities = r.smembers("entities")
     for e in entities:
         r.delete(e)
-    r.delete('entities')   
+    r.delete('entities')
 
 def GetEntityNumber():
     # get the entities
@@ -114,14 +114,14 @@ def createEntity():
         name = req["entityName"]
         lat = req["latitude"]
         lon = req["longitude"]
-        addEntity(name, lat, lon)    
+        addEntity(name, lat, lon)
         return redirect('/entities')
     form = NewEntityForm()
     return render_template('CreateEntity.html', title='Create entity', form=form)
 
 
 @app.route('/displayMap')
-def displayMap(): 
+def displayMap():
     entities = getEntities()
     return render_template('map.html', title='entities on map', entities=json.dumps(entities))
 
@@ -132,5 +132,5 @@ def GetUpdatedPositions():
     return "lp"
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    
+    app.run(debug=True,host='0.0.0.0', port=80)
+
