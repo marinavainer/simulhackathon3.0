@@ -39,10 +39,13 @@
       <p>
         <a href="{{ url_for('dropDB') }}">drop database</a><br/>
         <a href="{{ url_for('createEntity') }}">create Entity</a>
+        <form action="displayMap">
+          <button type="submit" value="">See entities on map</button>
+        </form> 
       </p>
       {% with messages = get_flashed_messages() %}
       <h1>Entities list</h1>
-      <h4>There is currently {{ entities|length }} in the database</h4>
+      <h4>There is currently {{ entities|length }} entities in the database</h4>
       {% if entities %}
 
       <table id="t">
@@ -87,10 +90,5 @@
       </table>
       {% endif %}
       {% endwith %}
-
-      <form action="displayMap">
-        <button type="submit" value="">See entities on map</button>
-      </form> 
-
     </body>
 </html>

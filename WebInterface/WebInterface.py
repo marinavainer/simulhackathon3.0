@@ -10,8 +10,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 
 #r = redis.Redis() #defauly localhost :6379
-r = redis.StrictRedis('localhost',6379,decode_responses=True) #defauly localhost :6379
-
+#r = redis.StrictRedis('localhost',6379,decode_responses=True) #defauly localhost :6379
+r = redis.StrictRedis(host='docksegenredis.redis.cache.windows.net',
+       port=6379, db=0, password='', ssl=False)
 
 # How entity is stored in redis?
 # Entity data is stored in HASHMAP,
@@ -41,12 +42,17 @@ def getEntityById(eid):
 def getEntities():
     entity_ids = r.smembers("entities")
     entities = []
-    for id in entity_ids:
-        e = r.hgetall(id)
-        e['id'] = id
+    for id in entity_ids: 
+        eid = id.decode("utf-8")
+        e = {}
+        e['name'] = r.hget(eid, 'name').decode("utf-8")
+        e['lon'] = r.hget(eid, 'lon').decode("utf-8")
+        e['lat'] = r.hget(eid, 'lat').decode("utf-8")
+        e['id'] = id.decode("utf-8")
         entities.append(e)
-
     return entities
+    
+
     
 def getEntity():
 
@@ -128,8 +134,8 @@ def displayMap():
 
 @app.route('/GetUpdatedPositions', methods=['POST'])
 def GetUpdatedPositions():
-    #return json.dumps({'status':'hopa'})
-    return "lp"
+    entities = getEntities()
+    return json.dumps(entities)
 
 if __name__ == '__main__':
     app.run(debug=True)

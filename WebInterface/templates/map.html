@@ -17,7 +17,7 @@
     function LoadMap() {
       // Initialize the platform object:
       var platform = new H.service.Platform({
-        'apikey': 'D_PX0rB2drv2PXPRNx5t-fFyWi88aRoB01cLd3DSNkA'
+        'apikey': 'pHWcaiJ0uNQN_gPBYdfoisTUjN4LBDzUW0pzAtEd2cs'
       });
 
       var entitiesFomFlask = JSON.parse('{{ entities | safe }}');
@@ -78,20 +78,40 @@
       
       const interval = setInterval(function() {
         UpdatedPosition(markerList)
-      }, 3000);
+      }, 2000);
     
     }
 
     function UpdatedPosition(markerList) {
         $.post('/GetUpdatedPositions'
         ).done(function(response) {
-          //console.log(response);
-          markerList.forEach(marker => marker.setGeometry( {lat:11, lng:21} ));
+          ParseAndUpdate(markerList, response);         
         }).fail(function() {
           console.log('fail');
         });
     }
 
+    function ParseAndUpdate(markerList, entityPositionList) {
+      var entitiesFomFlask = JSON.parse(entityPositionList);
+      var arrayLength = entitiesFomFlask.length;
+      var entitiesCoordArray = [];
+
+      for (var i = 0; i < arrayLength; i++) {
+        var currEntityFromFlask = entitiesFomFlask[i];
+        var entityCoord = {}; 
+        entityCoord["name"] = currEntityFromFlask["name"];
+        entityCoord["lat"] = parseFloat(currEntityFromFlask["lat"]);
+        entityCoord["lon"] = parseFloat(currEntityFromFlask["lon"]);
+        entitiesCoordArray[i] = entityCoord;
+
+      }
+
+      for (var i = 0; i < arrayLength; i++) {
+        var entity = entitiesCoordArray[i];
+        console.log(entity);
+        markerList.forEach(marker => marker.setGeometry( {lat: entity["lat"], lng: entity["lon"]} ));
+      } 
+    }
   </script>
   </body>
   </html>
