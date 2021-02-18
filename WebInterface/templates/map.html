@@ -108,8 +108,8 @@
 
       for (var i = 0; i < arrayLength; i++) {
         var entity = entitiesCoordArray[i];
-        console.log(entity);
-        markerList.forEach(marker => marker.setGeometry( {lat: entity["lat"], lng: entity["lon"]} ));
+        //console.log(entity);
+        markerList[i].setGeometry( {lat: entity["lat"], lng: entity["lon"]} );
       } 
     }
   </script>

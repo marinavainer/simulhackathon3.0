@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = 'you-will-never-guess'
 #r = redis.Redis() #defauly localhost :6379
 #r = redis.StrictRedis('localhost',6379,decode_responses=True) #defauly localhost :6379
 r = redis.StrictRedis(host='docksegenredis.redis.cache.windows.net',
-       port=6379, db=0, password='', ssl=False)
+       port=6379, db=0, password='6zfJhTMLb9Vi9aF9ND6f5tBybpgQdlXv2Aaf6LjkUV8=', ssl=False)
 
 # How entity is stored in redis?
 # Entity data is stored in HASHMAP,
@@ -42,16 +42,26 @@ def getEntityById(eid):
 def getEntities():
     entity_ids = r.smembers("entities")
     entities = []
-    for id in entity_ids: 
+    entitiesbinary =[]
+    pipe = r.pipeline()
+    for id in entity_ids:
         eid = id.decode("utf-8")
-        e = {}
-        e['name'] = r.hget(eid, 'name').decode("utf-8")
-        e['lon'] = r.hget(eid, 'lon').decode("utf-8")
-        e['lat'] = r.hget(eid, 'lat').decode("utf-8")
-        e['id'] = id.decode("utf-8")
-        entities.append(e)
+        pipe.hgetall(eid)
+        entity = {}
+        entity['id'] = id.decode("utf-8")
+        entities.append(entity)
+  
+    entitiesbinary = pipe.execute()
+
+    i = 0
+    for entitybinary in entitiesbinary:
+        entity = entities[i]
+        i = i + 1
+        entity['name'] = entitybinary[bytes(b'name')].decode("utf-8")
+        entity['lat'] = entitybinary[bytes(b'lat')].decode("utf-8")
+        entity['lon'] = entitybinary[bytes(b'lon')].decode("utf-8")
+
     return entities
-    
 
     
 def getEntity():
