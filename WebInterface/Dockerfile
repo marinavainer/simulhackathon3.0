@@ -1,7 +1,7 @@
-FROM ubuntu:bionic
+FROM ubuntu:groovy
 
-ADD entityManager.py /app/entityManager.py
+ADD . /app/
 RUN apt-get update && apt-get install -y python3 python3-pip
-RUN pip3 install flask redis
+RUN pip3 install flask redis flask-wtf
 WORKDIR /app
-ENTRYPOINT ["/bin/sh", "-c", "python3 /app/entityManager.py"]
+ENTRYPOINT ["/bin/sh", "-c", "python3 /app/WebInterface.py"]
