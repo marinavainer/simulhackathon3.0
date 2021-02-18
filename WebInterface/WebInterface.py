@@ -10,7 +10,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 
 #r = redis.Redis() #defauly localhost :6379
-r = redis.StrictRedis('localhost',6379,decode_responses=True) #defauly localhost :6379
+#r = redis.StrictRedis('localhost',6379,decode_responses=True) #defauly localhost :6379
+
+r = redis.StrictRedis(host='HOST',
+       port=6379, db=0, password='PASS', ssl=False)
 
 # How entity is stored in redis?
 # Entity data is stored in HASHMAP,
@@ -24,8 +27,8 @@ def addEntity(name, latitude, longitude):
 
     eid = "entity:{}".format(id)  # generates entity id in format: "entity:id"
     r.hset(eid, mapping={"name": name,
-                         "latitude": latitude,
-                         "longitude": longitude})
+                         "lat": latitude,
+                         "lon": longitude})
 
     # update SET of unique entity ids
     r.sadd("entities", eid)
@@ -40,13 +43,25 @@ def getEntityById(eid):
 def getEntities():
     entity_ids = r.smembers("entities")
     entities = []
-    for id in entity_ids:
-        e = r.hgetall(id)
-        e['id'] = id
+    for id in entity_ids: 
+        eid = id.decode("utf-8")
+        e = {}
+        e['name'] = r.hget(eid, 'name').decode("utf-8")
+        e['lon'] = r.hget(eid, 'lon').decode("utf-8")
+        e['lat'] = r.hget(eid, 'lat').decode("utf-8")
+        e['id'] = id.decode("utf-8")
+
         entities.append(e)
 
     return entities
     
+def getEntity():
+
+    id = 'entity:' + str(1)
+    e = r.hgetall(id)
+    for field in e:
+        field = field.decode("utf-8")
+    return e
 
 def CleanDatabase():
     entities = r.smembers("entities")
@@ -59,7 +74,6 @@ def GetEntityNumber():
     entities = getEntities()
     return len(entities)
 
-
 class NewEntityForm(FlaskForm):
     entityName = StringField('entityName', validators=[DataRequired()])
     latitude = StringField('latitude', validators=[DataRequired()])
@@ -70,6 +84,12 @@ class NewEntityForm(FlaskForm):
 @app.route('/')
 def index():
     return redirect('/entities')
+
+
+@app.route('/entityDetails')
+def entityDetails():
+    e = getEntity()
+    return jsonify(e)
 
 
 @app.route('/dropDB')
