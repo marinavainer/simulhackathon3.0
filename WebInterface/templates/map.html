@@ -6,6 +6,7 @@
   <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"type="text/javascript" charset="utf-8"></script>
   <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
   <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
   <link rel="stylesheet" type="text/css"href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
   </head>
     
@@ -16,7 +17,7 @@
     function LoadMap() {
       // Initialize the platform object:
       var platform = new H.service.Platform({
-        'apikey': 'nUNugfTHxgSwTjTmUWyuxS1nLkC3KBcaQgTXB7DMke4'
+        'apikey': 'D_PX0rB2drv2PXPRNx5t-fFyWi88aRoB01cLd3DSNkA'
       });
 
       var entitiesFomFlask = JSON.parse('{{ entities | safe }}');
@@ -56,28 +57,41 @@
       // Instantiate the default behavior, providing the mapEvents object:
       var behavior = new H.mapevents.Behavior(mapEvents);
   
+      var markerList = [];
       for (var i = 0; i < arrayLength; i++) {
         var entity = entitiesCoordArray[i];
         var my_text = entity["name"];
-        var svgMarkup = '<svg  width="50" height="24" xmlns="http://www.w3.org/2000/svg">' +
-                        '<rect stroke="black" fill="${FILL}" x="1" y="1" width="60" height="22" />' +
+        var svgMarkup = '<svg  width="70" height="24" xmlns="http://www.w3.org/2000/svg">' +
+                        '<rect stroke="black" fill="${FILL}" x="1" y="1" width="70" height="22" />' +
                         '<text x="5" y="18" font-size="10pt" font-family="Arial" font-weight="bold" ' +
                         'text-anchor="left" fill="${STROKE}" >'+my_text+'</text></svg>';
         var icon = new H.map.Icon(svgMarkup.replace('${FILL}', 'blue').replace('${STROKE}', 'white'));
         var marker = new H.map.Marker({ lat: entity["lat"], lng: entity["lon"] }, {icon: icon});
         map.addObject(marker);
+        //marker.setGeometry({lat:11, lng:21});
+        markerList[i] = marker;
       }
 
+      //markerList.forEach(marker => marker.setPosition( {lat:10.5, lng:20.5} ));
       // Create the default UI:
-      var ui = H.ui.UI.createDefault(map, maptypes);        
+      var ui = H.ui.UI.createDefault(map, maptypes);       
+      
+      const interval = setInterval(function() {
+        UpdatedPosition(markerList)
+      }, 3000);
+    
     }
-  
-    function GetUpdatedPositions(updatedEntitiesPositions) {
-            $.post('/GetUpdatedPositions'
-            ).done(function(response) {
-                $(updatedEntitiesPositions).text(response['entities'])
-            });
-        }
+
+    function UpdatedPosition(markerList) {
+        $.post('/GetUpdatedPositions'
+        ).done(function(response) {
+          //console.log(response);
+          markerList.forEach(marker => marker.setGeometry( {lat:11, lng:21} ));
+        }).fail(function() {
+          console.log('fail');
+        });
+    }
+
   </script>
   </body>
   </html>
